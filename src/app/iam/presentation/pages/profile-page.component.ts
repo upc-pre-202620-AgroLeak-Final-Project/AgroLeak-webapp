@@ -1,0 +1,8 @@
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
+import { AuthFacade } from '../../application/auth.facade';
+import { I18nService } from '../../../core/i18n/i18n.service';
+@Component({standalone:true,imports:[MatButtonModule,MatIconModule],template:`<div class="page"><div class="page-header"><div><h1 class="page-title">{{i18n.t('profile.title')}}</h1><p class="page-subtitle">{{i18n.t('profile.subtitle')}}</p></div></div><section class="panel profile"><div class="avatar">{{initials()}}</div><div class="identity"><h2>{{auth.user()?.firstName}} {{auth.user()?.lastName}}</h2><p>{{auth.user()?.email}}</p><span class="ag-badge">{{auth.user()?.role}}</span></div><button mat-stroked-button color="warn" (click)="logout()"><mat-icon>logout</mat-icon>{{i18n.t('auth.logout')}}</button></section></div>`,styles:[`.profile{padding:28px;display:flex;align-items:center;gap:22px}.avatar{width:72px;height:72px;border-radius:22px;background:#d7f1bf;color:#0f4c3a;display:grid;place-items:center;font-size:1.4rem;font-weight:900}.identity{flex:1}.identity h2{margin:0 0 5px}.identity p{margin:0 0 10px;color:var(--ag-muted)}@media(max-width:620px){.profile{align-items:flex-start;flex-wrap:wrap}.identity{min-width:60%}}`],changeDetection:ChangeDetectionStrategy.OnPush})
+export class ProfilePageComponent{readonly auth=inject(AuthFacade);readonly i18n=inject(I18nService);private router=inject(Router);initials(){const u=this.auth.user();return u?`${u.firstName[0]}${u.lastName[0]}`.toUpperCase():'AG'}logout(){this.auth.logout();void this.router.navigate(['/login']);}}

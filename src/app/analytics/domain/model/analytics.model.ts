@@ -1,0 +1,4 @@
+export interface AnalyticsDashboard{ waterUsageToday:number; estimatedWaterLoss:number; activeAlerts:number; criticalAlerts:number; onlineDevices:number; offlineDevices:number; maintenanceDevices:number; pestsDetectedToday:number; volumeUnit:string; timezone:string; from:string; to:string; coveredDeviceSeconds:number; pairedDeviceSeconds:number; }
+export interface AnalyticsPoint{ from:string; to:string; waterUsage:number; estimatedWaterLoss:number; flowIn:number|null; flowOut:number|null; pressure:number|null; soilMoisture:number|null; }
+export interface AnalyticsCharts{ hourly:AnalyticsPoint[]; alertsByType:Record<string,number>; alertsBySeverity:Record<string,number>; volumeUnit:string; timezone:string; maxHoldSeconds:number; }
+export interface DemoOverview{ farms:any[]; devices:any[]; scenarioDeviceId:string|null; }

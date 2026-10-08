@@ -1,0 +1,2 @@
+export interface PestObservation{ id:string; deviceId:string|null; pestCount:number; confidence:number; imageUrl:string|null; recordedAt:string; sectorId:string|null; pestType:string|null; count:number; detectedAt:string; }
+export interface CreatePestObservationRequest{ deviceId?:string|null; pestCount:number; confidence:number; imageUrl?:string|null; recordedAt?:string|null; sectorId?:string|null; pestType?:string|null; }

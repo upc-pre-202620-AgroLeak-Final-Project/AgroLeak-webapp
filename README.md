@@ -1,129 +1,199 @@
-# AgroLeak Frontend v0.1
+# AgroLeak Web — Angular DDD
 
-Web Application académica del MVP **AgroLeak**, preparada para integrarse con `AgroLeak-Backend-v0.1`.
-
-## Objetivo de la versión
-
-Esta interfaz demuestra el flujo funcional de la entrega parcial:
-
-`telemetría → backend → reglas → alertas → dashboard → acción manual de válvula → confirmación`
-
-No intenta ser todavía la plataforma comercial completa.
+Frontend Angular para **AgroLeak**, alineado con `AgroLeak-Backend-v0.2-final`.
 
 ## Stack
 
-- React
-- Vite
-- JavaScript ES Modules
-- CSS responsive propio
-- REST API AgroLeak v0.1
+- Angular 20 (standalone components)
+- TypeScript
+- Angular Material + CDK
+- RxJS + Signals
+- Chart.js
+- SCSS
+- JWT interceptor + route guard
+- i18n runtime ES / EN
+- Arquitectura DDD por bounded contexts
 
-## Funcionalidades incluidas
+## Backend esperado
 
-- Selección de dispositivo/gateway.
-- Dashboard consolidado.
-- Caudal de entrada y salida.
-- Presión y humedad del suelo.
-- Pérdida estimada.
-- Estado del gateway.
-- Historial de telemetría.
-- Alertas activas e historial.
-- Resolución manual de alertas.
-- Envío de comandos OPEN/CLOSE a válvula.
-- Simulación de confirmación del actuador.
-- Registro visual de observaciones de plagas.
-- Escenarios de exposición: NORMAL, LEAK y OBSTRUCTION.
-- Diseño responsive.
-- Estado visible de conexión con backend.
+Por defecto:
 
-## Fuera de alcance de v0.1
+```text
+Backend:    http://localhost:8081
+API:        http://localhost:8081/api/v1
+PostgreSQL: localhost:5433
+Frontend:   http://localhost:4200
+```
 
-- login/JWT;
-- múltiples usuarios o empresas;
-- WebSockets;
-- MQTT desde el navegador;
-- mapas/GIS;
-- Computer Vision real;
-- configuración avanzada de reglas;
-- reportes PDF;
-- notificaciones push/WhatsApp.
+El frontend consume directamente los bounded contexts reales del backend:
 
-## Requisitos
-
-- Node.js 20+
-- npm
-- AgroLeak Backend ejecutándose en `http://localhost:8080`
+- IAM
+- Farm
+- Devices
+- Monitoring
+- Alerts
+- Irrigation
+- Pests
+- Analytics
+- Demo (apoyo académico)
 
 ## Ejecutar
 
+Requisitos:
+
+- Node.js 20.19+ o 22.12+
+- npm
+- AgroLeak Backend ejecutándose en `localhost:8081`
+
 ```bash
 npm install
-npm run dev
+npm start
 ```
 
-Por defecto la aplicación queda disponible en:
+Abrir:
 
 ```text
-http://localhost:5173
+http://localhost:4200
 ```
 
-## Configurar API
+### Usuario demo del backend
 
-Copia `.env.example` como `.env` si deseas cambiar la URL:
+```text
+Email:    demo@agroleak.local
+Password: AgroLeakDemo123!
+```
+
+El formulario de login viene precargado con estas credenciales para facilitar la exposición.
+
+## Production environment
+
+Editar antes del deploy:
+
+```text
+src/environments/environment.production.ts
+```
+
+Cambiar:
+
+```ts
+backendUrl: 'https://api.agroleak.example',
+apiUrl: 'https://api.agroleak.example/api/v1'
+```
+
+Y asegurar que `CORS_ALLOWED_ORIGINS` del backend incluya el dominio real del frontend.
+
+Build:
 
 ```bash
-cp .env.example .env
+npm run build:prod
 ```
 
-```env
-VITE_API_URL=http://localhost:8080/api/v1
-```
+## DDD Frontend
 
-## Flujo recomendado para exposición
-
-1. Levantar PostgreSQL y backend.
-2. Ejecutar el frontend.
-3. Seleccionar el gateway demo.
-4. Ejecutar **Normal**.
-5. Ejecutar **Simular fuga**.
-6. Mostrar la alerta generada y la diferencia de caudal.
-7. Ir a **Válvula** y enviar `CLOSE`.
-8. Mostrar estado `PENDING`.
-9. Pulsar **Simular confirmación**.
-10. Mostrar estado `CONFIRMED`.
-
-## Estructura
+Cada bounded context está organizado, cuando corresponde, como:
 
 ```text
-src/
-├── assets/
-├── components/
-├── services/
-│   └── api.js
-├── utils/
-│   └── format.js
-├── App.jsx
-├── main.jsx
-└── styles.css
+bounded-context/
+├── application/
+├── domain/
+│   └── model/
+├── infrastructure/
+└── presentation/
+    └── pages/
 ```
 
-## Próximas versiones
+Los controllers REST del backend se reflejan como `Api` adapters en `infrastructure`.
+Las pages no construyen URLs directamente.
 
-### v0.2
-- pantalla de dispositivos/sectores;
-- formularios de configuración;
-- mejores gráficas históricas;
-- integración con ESP32/Wokwi.
+## Flujos implementados
 
-### v0.3
-- actualización en tiempo real con SSE/WebSockets;
-- MQTT en backend;
-- notificaciones.
+### IAM
 
-### v0.4+
-- autenticación;
-- múltiples fundos;
-- mapas;
-- reglas configurables;
+- registro;
+- login;
+- JWT;
+- interceptor Bearer;
+- guard de rutas;
+- `/users/me`;
+- logout.
+
+### Farm Management
+
+- listar y crear fundos;
+- estructura Farm → Field → Sector → Crop;
+- formularios de creación;
+- navegación por fundo.
+
+### Devices
+
+- listado de dispositivos;
+- alta de dispositivo;
+- estado, batería, firmware, sector y lastSeen.
+
+### Monitoring
+
+- selección de dispositivo;
+- histórico por rango;
+- estadísticas AVG / MIN / MAX;
+- gráfico Chart.js;
+- tabla de lecturas.
+
+### Alerts
+
+- filtros;
+- severidad / status;
+- acknowledge;
+- resolve.
+
+### Irrigation
+
+- selección de válvula;
+- OPEN / CLOSE;
+- MONITOR_ONLY / MANUAL / AUTO_SAFE;
+- confirmación simulada de actuador.
+
+### Pest Monitoring
+
+- galería de observaciones;
+- registro manual/simulado;
+- confidence, count, camera/device y sector.
+
+### Analytics
+
+- consumo de agua;
+- pérdida estimada;
+- alertas;
+- dispositivos online/offline/maintenance;
+- plagas del día;
+- telemetría de 24 horas;
+- escenarios demo NORMAL / LEAK / OBSTRUCTION.
+
+## i18n
+
+Archivos:
+
+```text
+src/assets/i18n/es.json
+src/assets/i18n/en.json
+```
+
+El idioma se cambia desde la barra lateral.
+
+## Style Guidelines
+
+Ver [`docs/STYLE_GUIDE.md`](docs/STYLE_GUIDE.md).
+
+## Arquitectura
+
+Ver [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+## Roadmap restante (~20%)
+
+- MQTT real;
+- WebSockets / SSE;
 - Computer Vision real;
-- analítica e IA.
+- ML de anomalías;
+- AUTO_SAFE autónomo;
+- push / WhatsApp;
+- GIS avanzado;
+- password recovery / refresh tokens avanzados.

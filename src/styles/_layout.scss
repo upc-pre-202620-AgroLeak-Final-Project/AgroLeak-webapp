@@ -1,0 +1,12 @@
+.ag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--ag-surface-soft);
+  font-size: .78rem;
+  font-weight: 650;
+}
+.ag-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.ag-divider { height:1px; background:var(--ag-border); margin: 16px 0; }
